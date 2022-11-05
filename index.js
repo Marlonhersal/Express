@@ -1,16 +1,15 @@
 const express = require('express')
+const {logErrors, errorHandler, boomErrorHandler} = require("./middleware/error.handler.js")
+
 const faker = require('faker')
 const app = express()
 const port = 3000;
 const routeApi = require('./routes')
 
-app.use(express.json())
 
 app.get('/', function(req,res){
     res.send('Hola mi server en express')
 })
-
-
 
 app.get('/users', function(req,res){
     const {limit, offset} = req.query
@@ -23,8 +22,12 @@ app.get('/users', function(req,res){
     }
 })
 
+routeApi(app);
+app.use(express.json())
+app.use(logErrors)
+app.use(boomErrorHandler)
+app.use(errorHandler) 
 
-routeApi(app)
 
 app.listen(port, ()=>{
     console.log("Funciona")
